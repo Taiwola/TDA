@@ -1,18 +1,18 @@
 import { Metadata } from "next";
-import AllProducts from "./component/allProducts";
+import Login from "./component/login";
 import Header from "@/app/component/Header";
 import Footer from "@/app/component/Footer";
 
 export const metadata: Metadata = {
-  title: "Products",
-  description: "TDA Single Product",
+  title: "Sign in",
+  description: "TDA Login Page",
 };
 
-export default function Page() {
+export default function page() {
   return (
     <>
       <Header />
-      <AllProducts />
+      <Login />
       <Footer />
     </>
   );

@@ -1,5 +1,7 @@
+import { Button } from "@heroui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 const CartPopoverContent = () => {
   const cartItems = [
@@ -46,7 +48,7 @@ const CartPopoverContent = () => {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="flex items-center p-4 border-b border-gray-200"
+                className="flex items-center w-full p-4 border-b border-gray-200"
               >
                 {/* Product Image */}
                 <div className="relative w-16 h-16 flex-shrink-0">
@@ -100,12 +102,22 @@ const CartPopoverContent = () => {
 
           {/* Actions */}
           <div className="flex gap-2">
-            <button className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
-              View Cart
-            </button>
-            <button className="flex-1 px-4 py-2 bg-burntgold text-white rounded-lg hover:bg-opacity-90 transition-colors">
-              Checkout
-            </button>
+            <Link href={"/cart"}>
+              <Button
+                variant="faded"
+                className="hover:bg-burntgold rounded-sm transition-all"
+              >
+                View Cart
+              </Button>
+            </Link>
+            <Link href={"/checkout"}>
+              <Button
+                variant="faded"
+                className="bg-burntgold rounded-sm hover:bg-black hover:text-white transition-all"
+              >
+                Checkout
+              </Button>
+            </Link>
           </div>
         </div>
       )}

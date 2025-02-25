@@ -1,18 +1,19 @@
+import React from "react";
+import RegisterPage from "./component/register";
 import { Metadata } from "next";
-import AllProducts from "./component/allProducts";
 import Header from "@/app/component/Header";
 import Footer from "@/app/component/Footer";
 
 export const metadata: Metadata = {
-  title: "Products",
-  description: "TDA Single Product",
+  title: "sign up",
+  description: "TDA Register Page",
 };
 
-export default function Page() {
+export default function page() {
   return (
     <>
       <Header />
-      <AllProducts />
+      <RegisterPage />
       <Footer />
     </>
   );

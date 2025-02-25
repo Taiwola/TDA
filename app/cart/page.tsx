@@ -1,18 +1,19 @@
 import { Metadata } from "next";
-import AllProducts from "./component/allProducts";
+import React from "react";
+import Cart from "./component/cart";
 import Header from "@/app/component/Header";
 import Footer from "@/app/component/Footer";
 
 export const metadata: Metadata = {
-  title: "Products",
-  description: "TDA Single Product",
+  title: "Cart",
+  description: "TDA Cart Page",
 };
 
-export default function Page() {
+export default function page() {
   return (
     <>
       <Header />
-      <AllProducts />
+      <Cart />
       <Footer />
     </>
   );

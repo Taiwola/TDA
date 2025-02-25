@@ -1,5 +1,6 @@
 "use client";
-import { ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { ShoppingCart, Menu } from "lucide-react"; // Import Menu icon for the hamburger
 import Image from "next/image";
 import Link from "next/link";
 import { FC, ReactNode } from "react";
@@ -12,6 +13,12 @@ import CartPopoverContent from "./CartPopover";
 import { Search } from "./Search";
 
 export default function Header() {
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  const toggleMobileNav = () => {
+    setIsMobileNavOpen(!isMobileNavOpen);
+  };
+
   return (
     <header className="bg-white border-b rounded-b-lg">
       <div className="container mx-auto py-2 flex items-center justify-between px-6">
@@ -24,12 +31,12 @@ export default function Header() {
                 width={100}
                 height={60}
               />
-              {/* <span className="font-bold text-xl text-gray-800">Your Brand</span> */}
             </div>
           </Link>
 
-          <nav className="flex items-center gap-8">
-            <NavLink href="/products">All</NavLink>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:inline-flex md:items-center md:gap-8">
+            <NavLink href="/products">All Categories</NavLink>
             <NavLink href="/">Kaftans</NavLink>
             <NavLink href="/about">Agbada</NavLink>
             <NavLink href="/about">Footwears</NavLink>
@@ -37,10 +44,12 @@ export default function Header() {
           </nav>
         </div>
 
-        <nav className="flex items-center">
+        {/* Search Component - Hidden on Mobile, Visible on Desktop */}
+        <nav className="hidden md:flex items-center">
           <Search />
         </nav>
 
+        {/* Shopping Cart */}
         <div className="relative group">
           <Popover>
             <PopoverTrigger>
@@ -58,7 +67,30 @@ export default function Header() {
             </PopoverContent>
           </Popover>
         </div>
+
+        {/* Mobile Hamburger Menu */}
+        <div className="md:hidden">
+          <Menu
+            className="cursor-pointer hover:text-muted-foreground transition-colors"
+            width={30}
+            height={30}
+            onClick={toggleMobileNav}
+          />
+        </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      {isMobileNavOpen && (
+        <div className="md:hidden bg-white border-t">
+          <nav className="flex flex-col items-center gap-4 py-4">
+            <NavLink href="/products">All Categories</NavLink>
+            <NavLink href="/">Kaftans</NavLink>
+            <NavLink href="/about">Agbada</NavLink>
+            <NavLink href="/about">Footwears</NavLink>
+            <NavLink href="/about">Catalogue</NavLink>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
