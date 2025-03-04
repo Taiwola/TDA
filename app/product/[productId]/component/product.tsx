@@ -4,6 +4,8 @@ import Image from "next/image";
 import ProductCard from "@/app/component/ProductCard";
 import { Button } from "@heroui/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AddItemToCart } from "@/app/lib/action"; // Import server action
+import { CartItem } from "@/app/lib/session"; // Import CartItem type
 
 type Measurement = {
   Neck: number;
@@ -26,6 +28,7 @@ type Measurements = {
 
 export default function Product() {
   const [quantity, setQuantity] = useState(1);
+  const [isAdding, setIsAdding] = useState(false); // Track adding state
 
   const handleDecrease = () => {
     if (quantity > 1) setQuantity(quantity - 1);
@@ -34,13 +37,13 @@ export default function Product() {
   const handleIncrease = () => {
     setQuantity(quantity + 1);
   };
-  // Sample product data
+
   const product = {
     id: 1,
     title: "Product Title",
     description:
       "This is a detailed description of the product. It includes information about the features, materials, and benefits of the product.",
-    price: "₦30,800",
+    price: 30800,
     images: [
       "/images/kaftan5.jpg",
       "/images/kaftan1.jpg",
@@ -96,34 +99,67 @@ export default function Product() {
     } as Measurements,
   };
 
-  const [selectedImage, setSelectedImage] = React.useState(product.images[0]);
-  const [selectedColor, setSelectedColor] = React.useState(product.colors[0]);
-  const [selectedSize, setSelectedSize] = React.useState("");
+  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
+  const [selectedSize, setSelectedSize] = useState("");
 
-  // Sample related products
   const relatedProducts = [
     {
       id: 2,
       name: "Related Product 1",
-      price: "₦30,800",
+      price: 30800,
       image: "/images/kaftan4.png",
       link: "/product/2",
     },
     {
       id: 3,
       name: "Related Product 2",
-      price: "₦46,500",
+      price: 46500,
       image: "/images/kaftan5.jpg",
       link: "/product/3",
     },
     {
       id: 4,
       name: "Related Product 3",
-      price: "₦23,100",
+      price: 23100,
       image: "/images/kaftan1.jpg",
       link: "/product/4",
     },
   ];
+
+  const handleAddToCart = async () => {
+    if (!selectedSize) return; // Prevent adding if no size selected
+
+    setIsAdding(true);
+
+    const cartItem: CartItem = {
+      id: product.id.toString(),
+      image: selectedImage,
+      name: product.title,
+      price: product.price, // Already a number, matches CartItem
+      quantity,
+      measurement: {
+        [selectedSize]:
+          product.measurements[selectedSize as keyof Measurements],
+      } as Record<string, Measurement>,
+    };
+
+    try {
+      const result = await AddItemToCart(cartItem);
+      if (result.success) {
+        console.log("Added to cart:", result.cart);
+        setSelectedSize(""); // Reset size
+        setQuantity(1); // Reset quantity
+      } else {
+        console.error("Failed to add to cart:", result.error);
+        // Optionally show error feedback to user
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setIsAdding(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-6 py-12">
@@ -170,8 +206,8 @@ export default function Product() {
             {product.description}
           </p>
 
-          <p className="text-2xl font-semibold text-burnt-gold mb-6">
-            {product.price}
+          <p className="text-2xl font-semibold text-burntgold mb-6">
+            ₦{product.price.toLocaleString()}
           </p>
 
           <hr />
@@ -186,7 +222,7 @@ export default function Product() {
                   onClick={() => setSelectedColor(color)}
                   className={`px-4 py-2 font-light border rounded-lg ${
                     selectedColor === color
-                      ? "border-burnt-gold bg-burntgold text-white"
+                      ? "border-burntgold bg-burntgold text-white"
                       : "border-gray-300"
                   }`}
                 >
@@ -206,7 +242,7 @@ export default function Product() {
                   onClick={() => setSelectedSize(size)}
                   className={`px-4 py-2 border rounded-lg ${
                     selectedSize === size
-                      ? "border-burnt-gold bg-burntgold text-white"
+                      ? "border-burntgold bg-burntgold text-white"
                       : "border-gray-300"
                   }`}
                 >
@@ -216,7 +252,7 @@ export default function Product() {
             </div>
           </div>
 
-          {/* measurements */}
+          {/* Measurements */}
           <AnimatePresence mode="wait">
             {selectedSize && (
               <motion.div
@@ -271,13 +307,9 @@ export default function Product() {
             <Button
               variant="faded"
               className="bg-burntgold text-white w-[80%] font-semibold py-2 rounded-md"
-              onPress={() => {
-                console.log(
-                  `Added to cart: ${product.title}, Size: ${selectedSize}, Qty: ${quantity}, selectedColor: ${selectedColor}`
-                );
-                setSelectedSize("");
-              }}
-              disabled={!selectedSize}
+              onPress={handleAddToCart}
+              disabled={!selectedSize || isAdding}
+              isLoading={isAdding} // Show loading state
             >
               Add to Cart
             </Button>
@@ -298,7 +330,7 @@ export default function Product() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {relatedProducts.map((relatedProduct, index) => (
             <ProductCard
-              key={index}
+              key={relatedProduct.id} // Use id for better key uniqueness
               product={relatedProduct}
               index={index}
               isButtomAllowed={true}

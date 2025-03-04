@@ -2,29 +2,13 @@
 import { Button } from "@heroui/react";
 import React, { useState } from "react";
 import { Summary } from "@/app/component/summary";
+import { CartItem } from "@/app/lib/session";
 
-export default function Checkout() {
-  const cartItems = [
-    {
-      title: "Wireless Headphones",
-      quantity: 2,
-      price: 49.99,
-      image: "/images/kaftan3.png",
-    },
-    {
-      title: "Bluetooth Speaker",
-      quantity: 1,
-      price: 29.99,
-      image: "/images/kaftan3.png",
-    },
-    {
-      title: "Smartwatch",
-      quantity: 1,
-      price: 99.99,
-      image: "/images/kaftan3.png",
-    },
-  ];
+type Props = {
+  cartItems?: CartItem[];
+};
 
+export default function Checkout({ cartItems = [] }: Props) {
   // Shipping locations and prices
   const shippingOptions = [
     { location: "Amuwo Odofin", price: 7000 },
@@ -52,7 +36,7 @@ export default function Checkout() {
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
         {/* Order Summary */}
-        <div className="bg-white rounded-lg shadow-md p-6 lg:sticky lg:top-8">
+        <div className="p-6 lg:sticky lg:top-8">
           <Summary
             cart={cartItems}
             checkoutPage={true}
@@ -111,6 +95,21 @@ export default function Checkout() {
                   type="text"
                   id="address"
                   placeholder="Address"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Email"
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                   required
                 />

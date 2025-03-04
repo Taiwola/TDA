@@ -6,37 +6,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
+import { CartItem } from "../lib/session";
 
-const CartModalContent = () => {
-  const [cartItems, setCartItems] = React.useState([
-    {
-      id: 1,
-      name: "Product 1",
-      price: 49.99,
-      image: "/images/kaftan1.jpg",
-      quantity: 2,
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      price: 59.99,
-      image: "/images/kaftan2.jpg",
-      quantity: 1,
-    },
-  ]);
+type Props = {
+  cartItems?: CartItem[]; // Keep optional
+  onRemoveItem?: (id: string) => void;
+};
 
+const CartModalContent = ({ cartItems = [], onRemoveItem }: Props) => {
+  // Default to empty array
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  const handleRemoveItem = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const handleRemoveItem = (id: string) => {
+    if (onRemoveItem) {
+      onRemoveItem(id);
+    }
   };
 
   return (
     <div className="p-6">
-      {/* Cart Header */}
       <div className="mb-4">
         <h3 className="text-xl font-semibold text-gray-900">Your Cart</h3>
         <p className="text-sm text-gray-500">
@@ -44,7 +35,6 @@ const CartModalContent = () => {
         </p>
       </div>
 
-      {/* Cart Items */}
       <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         <AnimatePresence>
           {cartItems.length === 0 ? (
@@ -87,7 +77,7 @@ const CartModalContent = () => {
                   </h4>
                   <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
                   <p className="text-sm font-semibold text-amber-700">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ₦{(item.price * item.quantity).toLocaleString()}
                   </p>
                 </div>
                 <button
@@ -103,22 +93,21 @@ const CartModalContent = () => {
         </AnimatePresence>
       </div>
 
-      {/* Cart Footer */}
       {cartItems.length > 0 && (
         <div className="mt-6 space-y-4">
           <div className="flex justify-between items-center">
             <p className="text-lg font-semibold text-gray-900">Total</p>
             <p className="text-lg font-semibold text-amber-700">
-              ${total.toFixed(2)}
+              ₦{total.toLocaleString()}
             </p>
           </div>
-          <div className="space-y-2">
-            <Link href="/cart">
+          <div className="flex justify-between items-center gap-2">
+            <Link href="/cart" className="w-full">
               <Button className="w-full bg-gray-100 text-gray-700 py-2.5 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all">
                 View Cart
               </Button>
             </Link>
-            <Link href="/checkout">
+            <Link href="/checkout" className="w-full">
               <Button className="w-full bg-amber-600 text-white py-2.5 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
                 Checkout
               </Button>

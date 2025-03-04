@@ -1,14 +1,10 @@
 import React from "react";
 import { Button } from "@heroui/react";
 import Link from "next/link";
+import { CartItem } from "../lib/session";
 
 type SummaryProps = {
-  cart: {
-    title: string;
-    quantity: number;
-    price: number;
-    image: string;
-  }[];
+  cart: CartItem[];
   checkoutPage: boolean;
   shippingCost?: number; // Optional shipping cost from Checkout page
 };
@@ -40,7 +36,7 @@ export const Summary = ({
       <div className="flex justify-between mb-2">
         <span className="text-gray-600">Subtotal</span>
         <span className="font-semibold text-gray-900">
-          ${subtotal.toFixed(2)}
+          ₦{subtotal.toLocaleString()}
         </span>
       </div>
 

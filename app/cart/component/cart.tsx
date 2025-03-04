@@ -4,29 +4,13 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { CartTable } from "./cartTable";
 import { Summary } from "@/app/component/summary";
+import { CartItem } from "@/app/lib/session";
 
-export default function Cart() {
-  const cartItems = [
-    {
-      title: "Wireless Headphones",
-      quantity: 2,
-      price: 49.99,
-      image: "/images/kaftan3.png",
-    },
-    {
-      title: "Bluetooth Speaker",
-      quantity: 1,
-      price: 29.99,
-      image: "/images/kaftan3.png",
-    },
-    {
-      title: "Smartwatch",
-      quantity: 1,
-      price: 99.99,
-      image: "/images/kaftan3.png",
-    },
-  ];
+type Props = {
+  cartItems?: CartItem[];
+};
 
+export default function Cart({ cartItems = [] }: Props) {
   const [cart, setCart] = useState(cartItems);
 
   const handleQuantityChange = (index: number, newQuantity: number) => {

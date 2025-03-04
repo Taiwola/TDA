@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TDA",
+  title: "TDA Retails",
   description: "TDA Ecommerce web site",
 };
 

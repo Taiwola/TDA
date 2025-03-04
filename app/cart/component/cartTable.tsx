@@ -1,12 +1,7 @@
+import { CartItem } from "@/app/lib/session";
 import Image from "next/image";
 import React, { SVGProps } from "react";
 
-type CartItem = {
-  title: string;
-  quantity: number;
-  price: number;
-  image: string;
-};
 
 type Props = {
   cart: CartItem[];
@@ -61,11 +56,11 @@ export const CartTable = ({ cart, onQuantityChange }: Props) => {
                   <div className="flex gap-3 items-center">
                     <Image
                       src={item.image}
-                      alt={item.title}
+                      alt={item.name}
                       width={70}
                       height={70}
                     />
-                    {item.title}
+                    {item.name}
                   </div>
                 </td>
                 <td className="px-4 py-2 text-center">
@@ -95,10 +90,10 @@ export const CartTable = ({ cart, onQuantityChange }: Props) => {
                   </div>
                 </td>
                 <td className="px-4 py-2 text-center">
-                  ${item.price.toFixed(2)}
+                  ₦{item.price.toLocaleString()}
                 </td>
                 <td className="px-4 py-2 text-right">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  ₦{(item.price * item.quantity).toLocaleString()}
                 </td>
               </tr>
             ))

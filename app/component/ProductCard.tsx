@@ -1,9 +1,13 @@
+"use client"; // Add this since it's a client component
+
 import React, { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import ModalComponent from "./modal/modal";
 import { Button } from "@heroui/react";
+import { AddItemToCart } from "@/app/lib/action"; // Import the server action
+import { CartItem } from "@/app/lib/session"; // Import CartItem type
 
 type Props = {
   product: {
@@ -11,7 +15,7 @@ type Props = {
     link: string;
     image: string;
     name: string;
-    price: string;
+    price: number;
   };
   index: number;
   isButtomAllowed: boolean;
@@ -25,14 +29,7 @@ export default function ProductCard({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
-
-  const handleDecrease = () => {
-    if (quantity > 1) setQuantity(quantity - 1);
-  };
-
-  const handleIncrease = () => {
-    setQuantity(quantity + 1);
-  };
+  const [isAdding, setIsAdding] = useState(false); // Optional: for loading state
 
   // Define measurements for each size
   const measurements: Record<
@@ -95,6 +92,65 @@ export default function ProductCard({
     },
   };
 
+  const addToCart = async () => {
+    if (!selectedSize) return; // Prevent adding if no size selected
+
+    setIsAdding(true); // Optional: Show loading state
+
+    // Filter measurements to only include the selected size
+    const selectedMeasurement = {
+      [selectedSize]: measurements[selectedSize],
+    } as Record<
+      string,
+      {
+        Neck: number;
+        Chest: number;
+        back: number;
+        Stomach: number;
+        Hips: number;
+        Trouser_waist: number;
+        Thigh: number;
+        Calf: number;
+        Bottom: number;
+      }
+    >;
+
+    // Construct CartItem object
+    const cartItem: CartItem = {
+      id: product.id.toString(), // Convert number to string if needed
+      image: product.image,
+      name: product.name,
+      price: Number(product.price), // Convert price string to number
+      quantity,
+      measurement: selectedMeasurement, // Pass all measurements
+    };
+
+    try {
+      const result = await AddItemToCart(cartItem);
+      if (result.success) {
+        console.log("Added to cart:", result.cart);
+        setIsModalOpen(false); // Close modal on success
+        setSelectedSize(""); // Reset size
+        setQuantity(1); // Reset quantity
+      } else {
+        console.error("Failed to add to cart:", result.error);
+        // Optionally show an error message to the user
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setIsAdding(false); // Reset loading state
+    }
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 1) setQuantity(quantity - 1);
+  };
+
+  const handleIncrease = () => {
+    setQuantity(quantity + 1);
+  };
+
   return (
     <>
       {/* Product Card */}
@@ -123,7 +179,9 @@ export default function ProductCard({
             <h3 className="text-lg font-semibold text-gray-900">
               {product.name}
             </h3>
-            <p className="text-sm text-gray-700">{product.price}</p>
+            <p className="text-sm text-gray-700">
+              ₦{product.price.toLocaleString()}
+            </p>
             <Button
               variant="faded"
               className="mt-2 text-sm font-light text-burntgold border"
@@ -213,13 +271,9 @@ export default function ProductCard({
             <Button
               variant="faded"
               className="bg-burntgold text-white font-semibold py-2 px-6 rounded-md"
-              onPress={() => {
-                console.log(
-                  `Added to cart: ${product.name}, Size: ${selectedSize}, Qty: ${quantity}`
-                );
-                setSelectedSize("");
-              }}
-              disabled={!selectedSize}
+              onPress={addToCart}
+              disabled={!selectedSize || isAdding} // Disable if no size or adding
+              isLoading={isAdding} // Optional: Show loading state
             >
               Add to Cart
             </Button>

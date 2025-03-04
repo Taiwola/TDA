@@ -5,16 +5,23 @@ import { ShoppingCart, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FC, ReactNode } from "react";
-import CartModalContent from "./CartPopover"; // Renamed from CartPopoverContent
+import CartModalContent from "./CartPopover";
 import { Search } from "./Search";
+import { CartItem } from "../lib/session";
+import { removeFromItemCart } from "../lib/action";
 
 interface HeaderProps {
   isSignedIn?: boolean;
+  initialCart?: CartItem[];
 }
 
-export default function Header({ isSignedIn }: HeaderProps) {
+export default function Header({ isSignedIn, initialCart }: HeaderProps) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isCartModalOpen, setIsCartModalOpen] = useState(false); // State for modal
+
+  const handleRemoveItem = async (id: string) => {
+    await removeFromItemCart(id); // Assuming you have this server action
+  };
 
   const toggleMobileNav = () => {
     setIsMobileNavOpen(!isMobileNavOpen);
@@ -59,7 +66,7 @@ export default function Header({ isSignedIn }: HeaderProps) {
                 height={28}
               />
               <span className="absolute -top-1 -right-1 bg-amber-700 text-white rounded-full px-2 py-1 text-xs transform group-hover:scale-110 transition-transform">
-                2
+                {initialCart ? initialCart.length : 0}
               </span>
             </button>
           </div>
@@ -144,7 +151,10 @@ export default function Header({ isSignedIn }: HeaderProps) {
               >
                 <X className="w-6 h-6" />
               </button>
-              <CartModalContent />
+              <CartModalContent
+                cartItems={initialCart}
+                onRemoveItem={handleRemoveItem}
+              />
             </div>
           </div>
         </>
