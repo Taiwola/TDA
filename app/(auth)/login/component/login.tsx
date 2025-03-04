@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
-import { useActionState } from "react"; // ✅ Correct import
-import { FormTemplate } from "../../component/templateForm";
+import { useActionState } from "react";
 import { LoginUser } from "./action";
+import { FormTemplate } from "../../component/templateForm";
 
 export const initialResultState: Result<ILogin> = {
   code: 0,
@@ -23,11 +23,13 @@ export default function LoginPage() {
             name: "email",
             type: "email",
             placeholder: "Email",
+            label: "Email",
             required: true,
           },
           {
             name: "password",
             type: "password",
+            label: "Password",
             placeholder: "Password",
             required: true,
           },
@@ -37,9 +39,11 @@ export default function LoginPage() {
         footerText="Don't have an account?"
         footerLinkText="Sign up"
         footerLinkHref="/register"
+        forgotPasswordLinkHref="/forgot-password" // Added Forgot Password link
         error={data.message}
       />
-      {/* {data?.message && <p className="mt-4 text-center text-red-500">{data.message}</p>} ✅ Display server response */}
+      {/* Optional: Keep this if you want a separate success/error message outside the form */}
+      {/* {data?.message && <p className="mt-4 text-center text-red-500">{data.message}</p>} */}
     </div>
   );
 }

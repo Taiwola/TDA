@@ -21,6 +21,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { Edit, Plus, TrashIcon } from "lucide-react";
+import Image from "next/image";
 
 // Interface for product data
 interface Product {
@@ -40,7 +41,7 @@ const initialProducts: Product[] = [
     category: "Electronics",
     price: 99.99,
     quantity: 50,
-    image: "https://via.placeholder.com/50",
+    image: "/images/kaftan3.png",
   },
   {
     id: 2,
@@ -48,7 +49,7 @@ const initialProducts: Product[] = [
     category: "Electronics",
     price: 199.99,
     quantity: 30,
-    image: "https://via.placeholder.com/50",
+    image: "/images/kaftan3.png",
   },
   {
     id: 3,
@@ -56,7 +57,7 @@ const initialProducts: Product[] = [
     category: "Electronics",
     price: 49.99,
     quantity: 100,
-    image: "https://via.placeholder.com/50",
+    image: "/images/kaftan3.png",
   },
   {
     id: 4,
@@ -64,7 +65,7 @@ const initialProducts: Product[] = [
     category: "Accessories",
     price: 39.99,
     quantity: 80,
-    image: "https://via.placeholder.com/50",
+    image: "/images/kaftan3.png",
   },
 ];
 
@@ -255,75 +256,95 @@ export const ProductsPage = () => {
           {selectedProduct ? "Edit Product" : "Add Product"}
         </DialogTitle>
         <DialogContent>
-          <TextField
-            label="Product Name"
-            value={selectedProduct?.name || ""}
-            onChange={(e) =>
-              setSelectedProduct({
-                ...selectedProduct!,
-                name: e.target.value,
-              })
-            }
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            select
-            label="Category"
-            value={selectedProduct?.category || ""}
-            onChange={(e) =>
-              setSelectedProduct({
-                ...selectedProduct!,
-                category: e.target.value,
-              })
-            }
-            fullWidth
-            margin="normal"
-          >
-            {categories.map((category) => (
-              <MenuItem key={category} value={category}>
-                {category}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label="Price"
-            type="number"
-            value={selectedProduct?.price || ""}
-            onChange={(e) =>
-              setSelectedProduct({
-                ...selectedProduct!,
-                price: parseFloat(e.target.value),
-              })
-            }
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Stock"
-            type="number"
-            value={selectedProduct?.quantity || ""}
-            onChange={(e) =>
-              setSelectedProduct({
-                ...selectedProduct!,
-                quantity: parseInt(e.target.value),
-              })
-            }
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Image URL"
-            value={selectedProduct?.image || ""}
-            onChange={(e) =>
-              setSelectedProduct({
-                ...selectedProduct!,
-                image: e.target.value,
-              })
-            }
-            fullWidth
-            margin="normal"
-          />
+          <form>
+            <TextField
+              label="Product Name"
+              value={selectedProduct?.name || ""}
+              onChange={(e) =>
+                setSelectedProduct({
+                  ...selectedProduct!,
+                  name: e.target.value,
+                })
+              }
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              select
+              label="Category"
+              value={selectedProduct?.category || ""}
+              onChange={(e) =>
+                setSelectedProduct({
+                  ...selectedProduct!,
+                  category: e.target.value,
+                })
+              }
+              fullWidth
+              margin="normal"
+            >
+              {categories.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Price"
+              type="number"
+              value={selectedProduct?.price || ""}
+              onChange={(e) =>
+                setSelectedProduct({
+                  ...selectedProduct!,
+                  price: parseFloat(e.target.value),
+                })
+              }
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Quantity"
+              type="number"
+              value={selectedProduct?.quantity || ""}
+              onChange={(e) =>
+                setSelectedProduct({
+                  ...selectedProduct!,
+                  quantity: parseInt(e.target.value),
+                })
+              }
+              fullWidth
+              margin="normal"
+            />
+            <div style={{ margin: "16px 0" }}>
+              <input
+                accept="image/*"
+                type="file"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const imageUrl = URL.createObjectURL(file);
+                    setSelectedProduct({
+                      ...selectedProduct!,
+                      image: imageUrl,
+                    });
+                  }
+                }}
+                style={{ display: "block", marginBottom: "10px" }}
+              />
+              {selectedProduct?.image && (
+                <Image
+                  src={selectedProduct.image}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "200px",
+                    maxHeight: "200px",
+                    objectFit: "contain",
+                  }}
+                  width={200}
+                  height={200}
+                />
+              )}
+            </div>
+          </form>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenProductDialog(false)}>Cancel</Button>

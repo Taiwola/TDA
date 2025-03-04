@@ -1,40 +1,22 @@
 "use client";
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import {
-  Avatar,
   Button,
   TextField,
   Typography,
   Container,
   Box,
-  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
-import { Edit } from "lucide-react";
-import { styled } from "@mui/system";
-
-// Styled component for the avatar container
-const AvatarContainer = styled("div")({
-  position: "relative",
-  display: "inline-block",
-  marginBottom: 16,
-});
-
-// Styled component for the edit icon overlay
-const EditIconOverlay = styled("div")({
-  position: "absolute",
-  bottom: 0,
-  right: 0,
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  borderRadius: "50%",
-  padding: 4,
-});
 
 // Define the type for user data
 type User = {
   name: string;
   email: string;
   password: string;
-  image: string;
 };
 
 export const SettingsPage: React.FC = () => {
@@ -42,39 +24,47 @@ export const SettingsPage: React.FC = () => {
   const [user, setUser] = useState<User>({
     name: "John Doe",
     email: "john.doe@example.com",
-    password: "",
-    image: "https://via.placeholder.com/150",
+    password: "password123", // Initial password
   });
 
   // State for form inputs
   const [name, setName] = useState<string>(user.name);
   const [email, setEmail] = useState<string>(user.email);
-  const [password, setPassword] = useState<string>("");
-  const [image, setImage] = useState<string>(user.image);
 
-  // Handle form submission
+  // State for password dialog
+  const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  // Handle form submission for name and email
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Update user data
     setUser({
+      ...user,
       name,
       email,
-      password: password || user.password, // Keep old password if new one is not provided
-      image,
     });
     alert("Profile updated successfully!");
   };
 
-  // Handle image upload
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  // Handle password change
+  const handlePasswordChange = () => {
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
     }
+    if (newPassword.length < 6) {
+      alert("Password must be at least 6 characters long!");
+      return;
+    }
+    setUser({
+      ...user,
+      password: newPassword,
+    });
+    setNewPassword("");
+    setConfirmPassword("");
+    setOpenPasswordDialog(false);
+    alert("Password updated successfully!");
   };
 
   return (
@@ -84,25 +74,7 @@ export const SettingsPage: React.FC = () => {
           Settings
         </Typography>
 
-        {/* Profile Picture */}
-        <Box display="flex" justifyContent="center" mb={4}>
-          <AvatarContainer>
-            <Avatar src={image} alt={name} sx={{ width: 150, height: 150 }} />
-            <EditIconOverlay>
-              <IconButton component="label">
-                <Edit />
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleImageUpload}
-                />
-              </IconButton>
-            </EditIconOverlay>
-          </AvatarContainer>
-        </Box>
-
-        {/* Update Form */}
+        {/* Update Form for Name and Email */}
         <form onSubmit={handleSubmit}>
           <TextField
             label="Name"
@@ -125,33 +97,86 @@ export const SettingsPage: React.FC = () => {
             margin="normal"
             required
           />
-          <TextField
-            label="New Password"
-            type="password"
-            value={password}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setPassword(e.target.value)
-            }
-            fullWidth
-            margin="normal"
-          />
-          <Box mt={2}>
+          <Box mt={2} display="flex" gap={2}>
             <Button
               type="submit"
               variant="contained"
               fullWidth
               sx={{
-                backgroundColor: "#AC7526", // Burnt gold background
-                color: "#FFFFFF", // White text
+                backgroundColor: "#AC7526",
+                color: "#FFFFFF",
                 "&:hover": {
-                  backgroundColor: "#8A5C1E", // Darker burnt gold on hover
+                  backgroundColor: "#8A5C1E",
                 },
               }}
             >
               Save Changes
             </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              onClick={() => setOpenPasswordDialog(true)}
+              sx={{
+                color: "#AC7526",
+                borderColor: "#AC7526",
+                "&:hover": {
+                  backgroundColor: "#AC7526",
+                  color: "#FFFFFF",
+                  borderColor: "#AC7526",
+                },
+              }}
+            >
+              Change Password
+            </Button>
           </Box>
         </form>
+
+        {/* Change Password Dialog */}
+        <Dialog
+          open={openPasswordDialog}
+          onClose={() => setOpenPasswordDialog(false)}
+        >
+          <DialogTitle>Change Password</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="New Password"
+              type="password"
+              value={newPassword}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setNewPassword(e.target.value)
+              }
+              fullWidth
+              margin="normal"
+              required
+            />
+            <TextField
+              label="Confirm New Password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setConfirmPassword(e.target.value)
+              }
+              fullWidth
+              margin="normal"
+              required
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenPasswordDialog(false)}>Cancel</Button>
+            <Button
+              onClick={handlePasswordChange}
+              sx={{
+                backgroundColor: "#AC7526",
+                color: "#FFFFFF",
+                "&:hover": {
+                  backgroundColor: "#8A5C1E",
+                },
+              }}
+            >
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Container>
   );

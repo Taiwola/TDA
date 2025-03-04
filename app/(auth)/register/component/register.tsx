@@ -24,18 +24,21 @@ export default function RegisterPage() {
           {
             name: "name",
             type: "text",
+            label: "Full Name",
             placeholder: "Full Name",
             required: true,
           },
           {
             name: "email",
             type: "email",
+            label: "Email",
             placeholder: "Email",
             required: true,
           },
           {
             name: "password",
             type: "password",
+            label: "Password",
             placeholder: "Password",
             required: true,
           },

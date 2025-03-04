@@ -1,8 +1,7 @@
 "use client";
 import { Button } from "@heroui/react";
 import React from "react";
-import { Bell, Menu, Settings, Sun } from "lucide-react";
-import Link from "next/link";
+import { Bell, Menu } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsSidebarCollapse } from "@/state";
 
@@ -42,11 +41,6 @@ export const Navbar = () => {
       {/* right side */}
       <div className="flex items-center justify-between gap-5">
         <div className="hidden md:flex ">
-          <div>
-            <Button onPress={() => {}}>
-              <Sun className="cursor-pointer text-gray-500" size={24} />
-            </Button>
-          </div>
           <div className="relative">
             <Bell className="cursor-pointer text-gray-500" size={24} />
             <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-[0.4rem] py-1 text-xs font-semibold leading-none text-red-100 bg-burntgold rounded-full">
@@ -58,9 +52,6 @@ export const Navbar = () => {
             <span className="font-semibold">seun Olanitori</span>
           </div>
         </div>
-        <Link href={"/settings"}>
-          <Settings className="cursor-pointer text-gray-500" size={24} />
-        </Link>
       </div>
     </div>
   );

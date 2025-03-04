@@ -128,7 +128,7 @@ export default function Hero() {
 
       <div className="flex justify-center">
         <Link href="/products">
-          <Button className="mt-7 mb-7 px-6 py-3 bg-burntgold text-white font-semibold rounded-lg shadow-md hover:bg-black focus:outline-none focus:ring-2 focus:ring-burntgold transition duration-300">
+          <Button className="mt-7 mb-7 px-6 bg-amber-600 text-white py-2 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
             Shop More
           </Button>
         </Link>

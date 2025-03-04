@@ -9,6 +9,7 @@ export const PendingOrders = () => {
       items: 3,
       total: 149.99,
       status: "Processing",
+      date: "2025-02-25",
     },
     {
       id: 2,
@@ -16,6 +17,7 @@ export const PendingOrders = () => {
       items: 5,
       total: 299.99,
       status: "Pending Payment",
+      date: "2025-02-24",
     },
     {
       id: 3,
@@ -23,54 +25,67 @@ export const PendingOrders = () => {
       items: 2,
       total: 99.99,
       status: "Shipped",
+      date: "2025-02-23",
     },
   ];
 
+  // Status color mapping
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Shipped":
+        return "bg-emerald-100 text-emerald-800";
+      case "Pending Payment":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-amber-100 text-amber-800";
+    }
+  };
+
   return (
-    <div
-      className="row-span-3 xl:row-span-6 col-span-1 xl:col-span-2 bg-white shadow-md rounded-2xl p-5"
-      style={{ color: "#000000" }} // Black text
-    >
-      <h2 className="text-lg font-semibold mb-4">Pending Orders</h2>
+    <div className="col-span-1 xl:col-span-2 row-span-3 xl:row-span-6 bg-white shadow-lg rounded-2xl p-6">
+      {/* Header */}
+      <h2 className="text-xl font-semibold text-gray-900 mb-6">
+        Pending Orders
+      </h2>
 
-      {/* Order List */}
-      <div className="space-y-4">
-        {pendingOrders.map((order) => (
-          <div
-            key={order.id}
-            className="flex justify-between items-center p-4 rounded-lg"
-            style={{ backgroundColor: "#F5F5F5" }} // Light gray background
-          >
-            {/* Customer and Items */}
-            <div>
-              <p className="font-medium">{order.customer}</p>
-              <p className="text-sm text-gray-600">{order.items} items</p>
-            </div>
+      {/* Orders Container */}
+      <div className="space-y-4 max-h-[calc(100%-2rem)] overflow-y-auto">
+        {pendingOrders.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">
+            No pending orders at the moment
+          </p>
+        ) : (
+          pendingOrders.map((order) => (
+            <div
+              key={order.id}
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200 border border-gray-200"
+            >
+              {/* Left Section - Customer Info */}
+              <div className="space-y-1">
+                <p className="font-medium text-gray-900">{order.customer}</p>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>{order.items} items</span>
+                  <span>•</span>
+                  <span>{order.date}</span>
+                </div>
+              </div>
 
-            {/* Total and Status */}
-            <div className="text-right">
-              <p
-                className="font-semibold"
-                style={{ color: "#AC7526" }} // Burnt gold for total
-              >
-                ${order.total.toFixed(2)}
-              </p>
-              <p
-                className="text-sm"
-                style={{
-                  color:
-                    order.status === "Shipped"
-                      ? "#10B981" // Green for shipped
-                      : order.status === "Pending Payment"
-                      ? "#EF4444" // Red for pending payment
-                      : "#AC7526", // Burnt gold for processing
-                }}
-              >
-                {order.status}
-              </p>
+              {/* Right Section - Total and Status */}
+              <div className="mt-2 sm:mt-0 flex items-center gap-4">
+                <p className="font-semibold text-amber-700">
+                  ${order.total.toFixed(2)}
+                </p>
+                <span
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor(
+                    order.status
+                  )}`}
+                >
+                  {order.status}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

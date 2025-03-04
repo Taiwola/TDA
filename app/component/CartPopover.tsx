@@ -1,45 +1,66 @@
+// component/CartModalContent.tsx
+"use client";
+import React from "react";
 import { Button } from "@heroui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 
-const CartPopoverContent = () => {
-  const cartItems = [
+const CartModalContent = () => {
+  const [cartItems, setCartItems] = React.useState([
     {
       id: 1,
       name: "Product 1",
-      price: "$49.99",
+      price: 49.99,
       image: "/images/kaftan1.jpg",
       quantity: 2,
     },
     {
       id: 2,
       name: "Product 2",
-      price: "$59.99",
+      price: 59.99,
       image: "/images/kaftan2.jpg",
       quantity: 1,
     },
-  ];
+  ]);
+
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  const handleRemoveItem = (id: number) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
 
   return (
-    <div>
+    <div className="p-6">
       {/* Cart Header */}
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold">Your Cart</h3>
-        <p className="text-sm text-gray-500">{cartItems.length} items</p>
+      <div className="mb-4">
+        <h3 className="text-xl font-semibold text-gray-900">Your Cart</h3>
+        <p className="text-sm text-gray-500">
+          {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
+        </p>
       </div>
 
       {/* Cart Items */}
-      <div className="max-h-96 overflow-y-auto">
+      <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         <AnimatePresence>
           {cartItems.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-4 text-center text-gray-500"
+              className="py-8 text-center text-gray-500"
             >
-              Your cart is empty.
+              <p className="text-lg">Your cart is empty</p>
+              <Link
+                href="/products"
+                className="text-amber-600 hover:underline text-sm mt-2 inline-block"
+              >
+                Start Shopping
+              </Link>
             </motion.div>
           ) : (
             cartItems.map((item) => (
@@ -47,43 +68,34 @@ const CartPopoverContent = () => {
                 key={item.id}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex items-center w-full p-4 border-b border-gray-200"
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors"
               >
-                {/* Product Image */}
                 <div className="relative w-16 h-16 flex-shrink-0">
                   <Image
                     src={item.image}
                     alt={item.name}
                     fill
-                    className="object-cover rounded-lg"
-                    quality={100}
+                    className="object-cover rounded-md"
+                    quality={80}
                   />
                 </div>
-
-                {/* Product Details */}
                 <div className="ml-4 flex-1">
-                  <h4 className="text-md font-medium">{item.name}</h4>
-                  <p className="text-sm text-gray-500">
-                    Quantity: {item.quantity}
+                  <h4 className="text-sm font-medium text-gray-900 truncate">
+                    {item.name}
+                  </h4>
+                  <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
+                  <p className="text-sm font-semibold text-amber-700">
+                    ${(item.price * item.quantity).toFixed(2)}
                   </p>
-                  <p className="text-sm text-gray-500">{item.price}</p>
                 </div>
-
-                {/* Remove Button */}
-                <button className="text-gray-400 hover:text-red-500 transition-colors">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                <button
+                  onClick={() => handleRemoveItem(item.id)}
+                  className="ml-2 p-1 text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-full transition-colors"
+                  aria-label={`Remove ${item.name} from cart`}
+                >
+                  <Trash2 className="w-5 h-5" />
                 </button>
               </motion.div>
             ))
@@ -93,28 +105,21 @@ const CartPopoverContent = () => {
 
       {/* Cart Footer */}
       {cartItems.length > 0 && (
-        <div className="p-4 border-t border-gray-200">
-          {/* Total Price */}
-          <div className="flex justify-between mb-4">
-            <p className="text-lg font-semibold">Total</p>
-            <p className="text-lg font-semibold">$0.00</p>
+        <div className="mt-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <p className="text-lg font-semibold text-gray-900">Total</p>
+            <p className="text-lg font-semibold text-amber-700">
+              ${total.toFixed(2)}
+            </p>
           </div>
-
-          {/* Actions */}
-          <div className="flex gap-2">
-            <Link href={"/cart"}>
-              <Button
-                variant="faded"
-                className="hover:bg-burntgold rounded-sm transition-all"
-              >
+          <div className="space-y-2">
+            <Link href="/cart">
+              <Button className="w-full bg-gray-100 text-gray-700 py-2.5 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all">
                 View Cart
               </Button>
             </Link>
-            <Link href={"/checkout"}>
-              <Button
-                variant="faded"
-                className="bg-burntgold rounded-sm hover:bg-black hover:text-white transition-all"
-              >
+            <Link href="/checkout">
+              <Button className="w-full bg-amber-600 text-white py-2.5 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all">
                 Checkout
               </Button>
             </Link>
@@ -125,4 +130,4 @@ const CartPopoverContent = () => {
   );
 };
 
-export default CartPopoverContent;
+export default CartModalContent;
