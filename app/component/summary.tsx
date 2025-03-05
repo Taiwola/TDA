@@ -56,7 +56,7 @@ export const Summary = ({
       <div className="flex justify-between mb-9">
         <span className="text-gray-600 text-lg font-semibold">Total</span>
         <span className="font-semibold text-amber-700 text-lg">
-          {shipping > 0 ? "₦" : "$"}
+          {shipping > 0 ? "₦" : "₦"}
           {total.toLocaleString("en-NG", {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,

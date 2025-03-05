@@ -22,14 +22,28 @@ export default function Hero() {
       id: 2,
       name: "Product 2",
       price: "$59.99",
-      image: "/images/catalogue2.jpeg",
+      image: "/images/carousel2.jpg",
       link: "/product/2",
     },
     {
       id: 3,
       name: "Product 3",
       price: "$69.99",
-      image: "/images/catalogue3.jpg",
+      image: "/images/carousel3.jpg",
+      link: "/product/3",
+    },
+    {
+      id: 4,
+      name: "Product 4",
+      price: "$69.99",
+      image: "/images/carousel4.jpg",
+      link: "/product/3",
+    },
+    {
+      id: 5,
+      name: "Product 5",
+      price: "$69.99",
+      image: "/images/carousel1.png",
       link: "/product/3",
     },
   ];
@@ -84,27 +98,14 @@ export default function Hero() {
             onAnimationStart={() => setIsSwitching(true)} // Start overlay when animation starts
             onAnimationComplete={() => setIsSwitching(false)} // End overlay when animation completes
           >
-            {/* Use Next.js Image component for optimized images */}
             <Image
               src={products[index].image}
-              alt={`${products[index].name} - ${products[index].price}`}
+              alt={`${products[index].name}`}
               fill
               className="object-cover" // Ensures the image covers the container
               quality={100} // Set image quality (1-100)
               priority // Preload the image for better performance
             />
-
-            {/* Overlay with Product Info */}
-            <Link href={products[index].link}>
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-30 text-white hover:bg-opacity-20 transition-all cursor-pointer">
-                {/* <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center">
-                {products[index].name}
-              </h2> */}
-                {/* <p className="text-2xl md:text-3xl lg:text-4xl mt-4">
-                {products[index].price}
-              </p> */}
-              </div>
-            </Link>
           </motion.div>
         </AnimatePresence>
 

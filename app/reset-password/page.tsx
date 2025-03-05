@@ -1,22 +1,18 @@
-// app/reset-password/page.tsx
-"use server";
-import { redirect } from "next/navigation";
+"use client";
+import { redirect, useParams } from "next/navigation";
 import { FormTemplate } from "../(auth)/component/templateForm";
 
-export default async function ResetPassword({
-  searchParams,
-}: {
-  searchParams: { token?: string; error?: string };
-}) {
+export default function ResetPassword() {
+  const params = useParams();
+
   // Ensure token is present
-  const token = searchParams.token;
+  const token = params.token;
   if (!token) {
     return redirect("/forgot-password?error=Invalid or missing reset token");
   }
 
   // Server action to handle password reset
   async function handleResetPassword(formData: FormData) {
-    "use server";
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
@@ -75,7 +71,6 @@ export default async function ResetPassword({
         footerText="Back to"
         footerLinkText="Sign In"
         footerLinkHref="/login"
-        error={searchParams.error}
       />
     </div>
   );
